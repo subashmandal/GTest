@@ -105,10 +105,10 @@ function updateCameraPosition() {
     }
   }
 
-  if (keys['ArrowUp']) camera.position.z -= moveSpeed;
-  if (keys['ArrowDown']) camera.position.z += moveSpeed;
-  if (keys['ArrowLeft']) camera.position.x -= moveSpeed;
-  if (keys['ArrowRight']) camera.position.x += moveSpeed;
+  if (keys['ArrowUp']) camera.position.z += moveSpeed;
+  if (keys['ArrowDown']) camera.position.z -= moveSpeed;
+  if (keys['ArrowLeft']) camera.position.x += moveSpeed;
+  if (keys['ArrowRight']) camera.position.x -= moveSpeed;
 
   // Jump logic
   if (keys[' '] && !isJumping) {
