@@ -12,16 +12,11 @@
   <style>
     body { margin: 0; }
     canvas { display: block; }
-    #volume-control {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-    }
   </style>
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary static-top top-0">
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary position-absolute">
     <!-- Container wrapper -->
     <div class="container-fluid">
       <!-- Toggle button -->
@@ -52,6 +47,9 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <button type="button" class="btn btn-link" id="PlaySound">Play</button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="btn btn-link" id="PlaySound" data-mdb-toggle="modal" data-mdb-target="#volumeModal">Volume</button>
           </li>
           <!-- Dropdown -->
         <li class="nav-item dropdown">
@@ -127,8 +125,25 @@
     <!-- Container wrapper -->
   </nav>
 <!-- Navbar -->
-<div class="range">
-  <input type="range" id="volume-control" class="form-range" min="0" max="1" step="0.01" value="0.5">
+ <!-- Modal -->
+<div class="modal fade" id="volumeModal" tabindex="-1" aria-labelledby="volumeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="volumeModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="range">
+          <input type="range" id="volume-control" class="form-range" min="0" max="1" step="0.01" value="0.5">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-mdb-ripple-init>Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
   <script src="js/mdb.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
