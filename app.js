@@ -13,7 +13,7 @@ document.body.appendChild(renderer.domElement);
 
 // Add a basic cube character (simple geometry for demo purposes)
 const geometry = new THREE.BoxGeometry(1, 2, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const character = new THREE.Mesh(geometry, material);
 scene.add(character);
 
@@ -23,7 +23,7 @@ scene.add(axesHelper);
 
 // Add a ground plane
 const planeGeometry = new THREE.PlaneGeometry(100, 100);
-const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x808080, side: THREE.DoubleSide });
+const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 plane.rotation.x = Math.PI / 2;
 plane.position.y = -1;
