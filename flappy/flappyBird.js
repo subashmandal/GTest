@@ -1,7 +1,6 @@
 // Get DOM elements
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const startButton = document.getElementById('startButton');
 const restartButton = document.getElementById('restartButton');
 const voiceCommandOutput = document.getElementById('voiceCommandOutput');
 const backButton = document.getElementById('backButton');
@@ -17,22 +16,16 @@ function resizeCanvas() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    if (width < 600) { // Smartphone
-        canvas.width = width * 0.9;
-        canvas.height = height * 0.7;
-    } else if (width < 900) { // Tablet
-        canvas.width = width * 0.7;
-        canvas.height = height * 0.7;
-    } else { // Laptops and Desktops
-        canvas.width = width * 0.6;
-        canvas.height = height * 0.8;
-    }
+    canvas.width = width;
+    canvas.height = height * 1; // Set to 80% of the screen height (you can adjust this)
 
+    // Resize the bird accordingly
     bird.width = canvas.width * 0.06;  // 6% of canvas width
     bird.height = bird.width;
     bird.x = canvas.width * 0.1;
     bird.y = canvas.height - bird.height;
 }
+
 
 // Listen for window resize events
 window.addEventListener('resize', resizeCanvas);
@@ -228,8 +221,7 @@ function endGame() {
 }
 
 // Event listener for the Start Game button
-startButton.addEventListener('click', function() {
-    startButton.style.display = 'none';
+window.onload = function() {
     canvas.style.display = 'block';
     resizeCanvas();
     resetGame();
@@ -242,7 +234,7 @@ startButton.addEventListener('click', function() {
     backgroundMusic.play();
 
     gameLoop();
-});
+};
 
 // Event listener for the Restart Game button
 restartButton.addEventListener('click', function() {
@@ -267,6 +259,7 @@ restartButton.addEventListener('click', function() {
 // Event listener for the Back button
 backButton.addEventListener('click', function() {
     console.log("Back button clicked");
+    window.location.href = 'index.html';
 });
 
 // Initialize Speech Recognition

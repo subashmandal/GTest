@@ -5,12 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Bird with Voice Control</title>
 
-    <!-- MDBootstrap CSS -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css"
-      rel="stylesheet"
-    />
-
+    <!-- Font Awesome -->
+<link
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+rel="stylesheet"
+/>
+<!-- Google Fonts -->
+<link
+href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+rel="stylesheet"
+/>
+<!-- MDB -->
+<link
+href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css"
+rel="stylesheet"
+/>
     <style>
         body { 
             margin: 0; 
@@ -21,65 +30,18 @@
             height: 100vh;
             flex-direction: column;
         }
-
-        canvas { 
-            background: #70c5ce; 
-            max-width: 100%; 
-            height: auto; 
-            border: 2px solid #000;
-            display: none; /* Hide canvas initially */
-        }
-
-        .center-button {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 10; /* Ensure buttons are on top of the canvas */
-        }
-
-        #restartButton {
-            display: none; /* Hidden initially */
-        }
-
-        #voiceCommandOutput {
-            margin-top: 20px;
-            font-size: 18px;
-            color: white;
-        }
-
-        #scoreDisplay {
-            margin-top: 10px;
-            font-size: 18px;
-            color: white;
-        }
     </style>
 </head>
 <body>
-    <div class="container d-flex flex-column align-items-center">
-        <div class="position-relative" style="width: 100%;">
-            <canvas id="gameCanvas" class="mx-auto"></canvas>
-            <button id="restartButton" class="center-button">Restart</button>
-            <button id="backButton" class="center-button btn-danger" style="top: 60%; display: none;">Back</button>
-        </div>
-        <button id="startButton" class="btn btn-success mt-4">Start Game</button>
-        <div id="voiceCommandOutput" class="mt-3"></div>
-        <div id="scoreDisplay" class="mt-2">Score: 0</div>
+    <div class="container d-flex justify-content-center align-items-center">
+        <button onclick="window.open('game.html', '_self')" class="btn btn-success mt-4">Start Game</button>
     </div>
 
     <!-- MDBootstrap JS -->
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"
-    ></script>
-
-    <script src="flappyBird.js"></script>
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"
+></script>
 </body>
 </html>
