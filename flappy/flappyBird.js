@@ -7,12 +7,16 @@ const voiceCommandOutput = document.getElementById('voiceCommandOutput');
 const backButton = document.getElementById('backButton');
 const scoreDisplay = document.getElementById('scoreDisplay');
 
+// Load audio files
+const backgroundMusic = new Audio('audio/background.mp3'); // Path to your background music
+const jumpSound = new Audio('audio/jump.mp3'); // Path to your jump sound effect
+const collideSound = new Audio('audio/collision.mp3'); // Path to your collision sound effect
+
 // Function to resize the canvas based on the window size
 function resizeCanvas() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    // Set the canvas width and height based on the screen size
     if (width < 600) { // Smartphone
         canvas.width = width * 0.9;
         canvas.height = height * 0.7;
@@ -24,17 +28,40 @@ function resizeCanvas() {
         canvas.height = height * 0.8;
     }
 
-    // Adjust bird size and position based on canvas size
     bird.width = canvas.width * 0.06;  // 6% of canvas width
-    bird.height = bird.width;           // Make bird square
-    bird.x = canvas.width * 0.1;        // 10% of canvas width
-    bird.y = canvas.height - bird.height; // Start at the bottom of the canvas
+    bird.height = bird.width;
+    bird.x = canvas.width * 0.1;
+    bird.y = canvas.height - bird.height;
 }
 
 // Listen for window resize events
 window.addEventListener('resize', resizeCanvas);
 
-// Define the bird object
+// Load the bird image
+const birdImg = new Image();
+birdImg.src = 'image/character.png';
+
+// Load obstacle images
+const obstacleImgs = [];
+const obstacleImagePaths = [
+    'image/obstacle1.png',
+    'image/obstacle2.png',
+    'image/obstacle3.png'
+]; // Add your obstacle image paths here
+
+// Load all obstacle images
+obstacleImagePaths.forEach((path, index) => {
+    const img = new Image();
+    img.src = path;
+    img.onload = () => {
+        obstacleImgs[index] = img;
+    };
+});
+
+// Load the background image
+const backgroundImg = new Image();
+backgroundImg.src = 'image/background.jpg'; // Path to your background image
+
 const bird = { 
     x: 0, 
     y: 0, 
@@ -52,32 +79,43 @@ let frameCount = 0;
 let initialObstacleSpeed = 2; // Initial speed of obstacles
 let obstacleSpeed = initialObstacleSpeed; // Current speed of obstacles
 let score = 0; // Initialize score
+const fixedObstacleHeight = 25; // Fixed height for obstacle images
+let backgroundX = 0; // X position of the background
 
 // Function to draw the bird on the canvas
 function drawBird() {
-    ctx.fillStyle = 'yellow';
-    ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+    ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
+}
+
+// Function to draw the background image
+function drawBackground() {
+    // Draw the background image at current position
+    ctx.drawImage(backgroundImg, backgroundX, 0, canvas.width, canvas.height);
+    // Draw the background image again to cover the right edge when scrolling
+    ctx.drawImage(backgroundImg, backgroundX + canvas.width, 0, canvas.width, canvas.height);
 }
 
 // Function to update the game state
 function updateGame() {
-    // Update bird position based on velocity
     bird.velocity += bird.gravity;
     bird.y += bird.velocity;
 
-    // Prevent the bird from going below the canvas
     if (bird.y + bird.height > canvas.height) {
         bird.y = canvas.height - bird.height;
         bird.velocity = 0;
     }
 
-    // Update and draw obstacles
     updateObstacles();
 
-    // Check for collisions
     if (checkCollision()) {
         handleCollision();
         return; // Stop updating the game after collision
+    }
+
+    // Update background position for scrolling effect
+    backgroundX -= obstacleSpeed; // Move background left by the speed of the obstacles
+    if (backgroundX <= -canvas.width) {
+        backgroundX = 0; // Reset background position to create a seamless loop
     }
 }
 
@@ -85,39 +123,39 @@ function updateGame() {
 function updateObstacles() {
     frameCount++;
 
-    // Generate new obstacles every 90 frames
     if (frameCount % 220 === 0) {
-        const width = 3 + Math.random() * 2;
-        const height = canvas.height * 0.05 + Math.random() * (canvas.height * 0.01); // Reduce obstacle height
+        // Randomly select an obstacle image
+        const randomImg = obstacleImgs[Math.floor(Math.random() * obstacleImgs.length)];
+        
+        // Generate a random width for the obstacle
+        const minWidth = randomImg.width * 0.5; // Minimum width as 50% of original
+        const maxWidth = randomImg.width * 1.5; // Maximum width as 150% of original
+        const width = Math.random() * (maxWidth - minWidth) + minWidth;
 
-        // Add obstacle
         obstacles.push({
             x: canvas.width,
-            y: canvas.height - height, // Position obstacle on the ground
+            y: canvas.height - fixedObstacleHeight,
             width: width,
-            height: height,
-            passed: false // Track if the bird has passed the obstacle
+            height: fixedObstacleHeight,
+            img: randomImg,
+            passed: false
         });
 
-        // Increase the speed of obstacles after each set is added
-        obstacleSpeed += 0.1; // Increase speed slightly after each obstacle
+        obstacleSpeed += 0.1;
     }
 
-    // Move and draw obstacles
-    ctx.fillStyle = 'green';
-    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0); // Remove off-screen obstacles
+    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
 
     for (const obstacle of obstacles) {
-        obstacle.x -= obstacleSpeed; // Move leftwards at the current speed
+        obstacle.x -= obstacleSpeed;
 
-        // Check if bird has successfully passed the obstacle
         if (!obstacle.passed && bird.x > obstacle.x + obstacle.width) {
             obstacle.passed = true;
-            score += 1; // Increase score
-            scoreDisplay.textContent = `Score: ${score}`; // Update score display
+            score += 1;
+            scoreDisplay.textContent = `Score: ${score}`;
         }
 
-        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height); // Draw obstacle
+        ctx.drawImage(obstacle.img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
     }
 }
 
@@ -130,27 +168,33 @@ function checkCollision() {
             bird.y < obstacle.y + obstacle.height &&
             bird.y + bird.height > obstacle.y
         ) {
-            return true; // Collision detected
+            return true;
         }
     }
-    return false; // No collision
+    return false;
 }
 
 // Function to handle collisions (end the game)
 function handleCollision() {
-    gameStarted = false; // Stop the game loop
+    gameStarted = false;
     voiceCommandOutput.textContent = "Game Over! Click Restart to play again.";
-    restartButton.style.display = 'block'; // Show Restart button
-    backButton.style.display = 'block';    // Show Back button below Restart button
+    restartButton.style.display = 'block';
+    backButton.style.display = 'block';
+
+    //pause background sound
+    backgroundMusic.pause();
+    // Play collision sound
+    collideSound.play();
 }
 
 // Function to handle the game loop
 function gameLoop() {
     if (gameStarted) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-        updateGame(); // Update game state
-        drawBird();   // Draw the bird
-        requestAnimationFrame(gameLoop); // Continue the loop
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBackground();
+        updateGame();
+        drawBird();
+        requestAnimationFrame(gameLoop);
     }
 }
 
@@ -159,58 +203,69 @@ function resetGame() {
     obstacles = [];
     frameCount = 0;
     bird.velocity = 0;
-    bird.y = canvas.height - bird.height; // Reset bird to the bottom of the canvas
-    obstacleSpeed = initialObstacleSpeed; // Reset the obstacle speed to the initial value
-    score = 0; // Reset the score
-    scoreDisplay.textContent = `Score: ${score}`; // Update score display
+    bird.y = canvas.height - bird.height;
+    obstacleSpeed = initialObstacleSpeed;
+    score = 0;
+    scoreDisplay.textContent = `Score: ${score}`;
     voiceCommandOutput.textContent = "Speak loudly to move the bird up.";
-    restartButton.style.display = 'none'; // Hide Restart button
-    backButton.style.display = 'none';    // Show Back button
+    restartButton.style.display = 'none';
+    backButton.style.display = 'none';
 
-    // Clear and redraw the canvas to ensure it starts fresh
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-    drawBird(); // Redraw the bird at the initial position
+    backgroundX = 0; // Reset background position
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground();
+    drawBird();
 }
 
-// Function to handle the end of the game (e.g., after a collision)
+// Function to handle the end of the game
 function endGame() {
     gameStarted = false;
-    recognition.stop(); // Stop voice recognition
+    recognition.stop();
 
-    // Show the Restart and Back buttons
     restartButton.style.display = 'block';
     backButton.style.display = 'block';
 }
 
 // Event listener for the Start Game button
 startButton.addEventListener('click', function() {
-    startButton.style.display = 'none'; // Hide Start button
-    canvas.style.display = 'block';      // Show canvas
-    resizeCanvas();                      // Resize the canvas
-    resetGame();                         // Reset game state
-    gameStarted = true;                  // Set game state to started
-    recognition.start();                 // Start voice recognition
-    gameLoop();                          // Start the game loop
+    startButton.style.display = 'none';
+    canvas.style.display = 'block';
+    resizeCanvas();
+    resetGame();
+    gameStarted = true;
+    recognition.start();
+
+    // Play background music
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.5; // Adjust volume as needed
+    backgroundMusic.play();
+
+    gameLoop();
 });
 
 // Event listener for the Restart Game button
 restartButton.addEventListener('click', function() {
     if (recognition) {
-        recognition.stop(); // Stop the current recognition session
+        recognition.stop();
     }
-    resetGame();                         // Reset game state
-    gameStarted = true;                  // Set game state to started
+    resetGame();
+    gameStarted = true;
+
+    // Restart background music
+    backgroundMusic.currentTime = 0; // Reset playback position
+    backgroundMusic.play();
+
     setTimeout(() => {
-        recognition.start();             // Start voice recognition
-    }, 500);               // Start voice recognition
-    gameLoop();                          // Continue the game loop
-    restartButton.style.display = 'none'; // Hide Restart button
-    backButton.style.display = 'none';    // Hide Back button
+        recognition.start();
+    }, 500);
+    gameLoop();
+    restartButton.style.display = 'none';
+    backButton.style.display = 'none';
 });
 
 // Event listener for the Back button
 backButton.addEventListener('click', function() {
-    // Implement logic to go back to the main menu or another screen
     console.log("Back button clicked");
 });
 
@@ -219,7 +274,7 @@ const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognit
 recognition.lang = 'en-US';
 recognition.continuous = true;
 recognition.interimResults = false;
-recognition.maxAlternatives = 1; // Limit to one alternative for faster processing
+recognition.maxAlternatives = 1;
 
 let isSpeaking = false;
 let speakTimeout;
@@ -228,20 +283,19 @@ recognition.onstart = function(event) {
     clearTimeout(speakTimeout);
     isSpeaking = true;
 
-    // Display the recognized voice command
     const command = event.results[0][0].transcript;
     voiceCommandOutput.textContent = `Voice Command: ${command}`;
 
-    // Apply lift when speaking is detected
+    // jump sound
+    jumpSound.play();
+
     bird.velocity = bird.lift;
 
-    // Stop the lift effect shortly after speaking ends
     speakTimeout = setTimeout(() => {
         isSpeaking = false;
-    }, 0); // 300ms delay to detect silence
+    }, 0);
 };
 
-// Detect when the voice recognition starts
 recognition.onaudiostart = function() {
     voiceCommandOutput.textContent = "Voice recognition started. Speak to move the bird up.";
     console.log("Voice recognition has started.");
@@ -252,39 +306,32 @@ recognition.onspeechstart = function() {
     console.log("Speech detected.");
 };
 
-// Handle recognized voice commands
 recognition.onresult = function(event) {
     clearTimeout(speakTimeout);
     isSpeaking = true;
 
-    // Display the recognized voice command
     const command = event.results[0][0].transcript;
     voiceCommandOutput.textContent = `Voice Command: ${command}`;
 
-    // Apply lift when speaking is detected
     bird.velocity = bird.lift;
 
-    // Stop the lift effect shortly after speaking ends
     speakTimeout = setTimeout(() => {
         isSpeaking = false;
-    }, 0); // 300ms delay to detect silence
+    }, 0);
 };
 
-// Handle speech recognition errors
 recognition.onerror = function(event) {
     voiceCommandOutput.textContent = "Error: " + event.error;
 };
 
-// Detect when the voice recognition service ends
 recognition.onend = function() {
     voiceCommandOutput.textContent = "Voice recognition ended. Click restart to play again.";
     console.log("Voice recognition has ended.");
 };
 
-// Detect when the user stops speaking
 recognition.onspeechend = function() {
     voiceCommandOutput.textContent = "Speech has stopped.";
     console.log("Speech has stopped.");
 };
-// Initial message
+
 voiceCommandOutput.textContent = "Speak loudly to move the bird up.";
