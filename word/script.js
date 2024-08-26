@@ -4,44 +4,33 @@ const ctx = canvas.getContext('2d');
 let recognition;
 let score = 0;
 let words = [];
-let targetWord = '';
 const wordInterval = 2000; // Time interval between words (milliseconds)
 const gravity = 0.8; // Gravity effect
-const canvasWidth = canvas.width = 500;
-const canvasHeight = canvas.height = 400;
+let backgroundImage = new Image();
+backgroundImage.src = 'image/background.jpg'; // Replace with your background image path
 
 const wordList = [
     "start", "jump", "run", "fly", "stop", "go", "up", "down", "left", "right"
 ];
 
+// Load a sound to play when the word is correctly spoken
+let correctSound = new Audio('sound/success.mp3'); // Replace with your sound file path
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight; // Adjust height as needed
+}
+
 function startGame() {
+    resizeCanvas(); // Set initial canvas size
     score = 0;
     words = [];
-    targetWord = wordList[Math.floor(Math.random() * wordList.length)]; // Select initial target word
     document.getElementById('score-text').innerText = `Score: ${score}`;
-    updateTargetWordDisplay(); // Update target word display
     document.getElementById('status').innerText = '';
     document.getElementById('start-button').style.display = 'none';
     startVoiceRecognition();
     generateWords();
     gameLoop();
-}
-
-function updateTargetWordDisplay() {
-    const targetWordElement = document.createElement('p');
-    targetWordElement.id = 'target-word';
-    targetWordElement.style.fontSize = '24px';
-    targetWordElement.style.fontWeight = 'bold';
-    targetWordElement.style.color = '#3498db'; // Set initial color
-    targetWordElement.style.margin = '20px 0';
-    targetWordElement.innerText = `Target Word: ${targetWord}`;
-
-    const existingTargetWord = document.getElementById('target-word');
-    if (existingTargetWord) {
-        existingTargetWord.replaceWith(targetWordElement);
-    } else {
-        document.querySelector('.container').insertBefore(targetWordElement, document.querySelector('#game-info'));
-    }
 }
 
 function startVoiceRecognition() {
@@ -77,29 +66,49 @@ function generateWords() {
         const word = wordList[Math.floor(Math.random() * wordList.length)];
         const fontSize = 20; // Font size for the word
         const textWidth = ctx.measureText(word).width;
-        const x = Math.random() * (canvasWidth - textWidth); // Random x position within canvas
+        const x = Math.random() * (canvas.width - textWidth); // Random x position within canvas
         const y = -fontSize; // Start above the canvas
-        words.push({ text: word, x: x, y: y, color: '#2980b9', isActive: true, fontSize: fontSize });
+        words.push({ text: word, x: x, y: y, color: 'red', isActive: true, fontSize: fontSize });
     }, wordInterval);
 }
 
 function checkWord(spokenCommand) {
-    if (spokenCommand === targetWord) {
-        score += 10;
-        document.getElementById('score-text').innerText = `Score: ${score}`;
-        targetWord = wordList[Math.floor(Math.random() * wordList.length)]; // Set new target word
-        updateTargetWordDisplay(); // Update target word display
-    }
+    let foundMatch = false;
+
     words.forEach(word => {
-        if (word.text === spokenCommand) {
+        if (word.text === spokenCommand && word.isActive) {
             word.color = 'blue'; // Mark the word as correctly spoken
             word.isActive = false; // Deactivate the word
+            foundMatch = true;
         }
     });
+
+    if (foundMatch) {
+        score += 10;
+        document.getElementById('score-text').innerText = `Score: ${score}`;
+        correctSound.play(); // Play the correct sound
+    }
+}
+
+function drawRoundedRect(x, y, width, height, radius, color) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
 }
 
 function gameLoop() {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    // Draw the background image
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
     // Update and draw words
     for (let i = 0; i < words.length; i++) {
@@ -107,26 +116,42 @@ function gameLoop() {
             words[i].y += gravity; // Apply gravity
 
             // Check if word is off screen
-            if (words[i].y > canvasHeight) {
-                words[i].color = 'red'; // Missed word
+            if (words[i].y > canvas.height) {
+                words[i].color = 'red'; // Mark missed word in red
                 words[i].isActive = false;
             }
 
-            // Draw word
-            ctx.fillStyle = words[i].color;
+            // Draw rounded rectangle (box) around the word
+            const boxPadding = 10; // Padding around the word
+            const boxWidth = ctx.measureText(words[i].text).width + boxPadding * 2;
+            const boxHeight = words[i].fontSize + boxPadding * 2;
+            const boxX = words[i].x - boxPadding;
+            const boxY = words[i].y - words[i].fontSize - boxPadding;
+
+            drawRoundedRect(boxX, boxY, boxWidth, boxHeight, 10, words[i].color);
+
+            // Calculate position to center the text inside the box
+            const textX = words[i].x + (boxWidth - ctx.measureText(words[i].text).width) / 2 - boxPadding;
+            const textY = words[i].y - words[i].fontSize / 2 - boxPadding / 2;
+
+            // Draw the word
+            ctx.fillStyle = 'white';
             ctx.font = `bold ${words[i].fontSize}px Arial`; // Make the word bold
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
-            ctx.fillText(words[i].text, words[i].x, words[i].y);
+            ctx.fillText(words[i].text, textX, textY);
         }
     }
 
     // Remove inactive words
-    words = words.filter(word => word.isActive || word.y <= canvasHeight);
+    words = words.filter(word => word.isActive || word.y <= canvas.height);
 
     // Continue the game loop
     requestAnimationFrame(gameLoop);
 }
+
+// Adjust canvas size on window resize
+window.onresize = resizeCanvas;
 
 window.onload = function() {
     document.getElementById('start-button').style.display = 'inline-block';

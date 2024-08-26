@@ -22,14 +22,16 @@ rel="stylesheet"
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>EchoQuest</h1>
-        <div id="game-info">
-            <p id="score-text">Score: 0</p>
+    <div class="container-fluid g-0">
+        <div class="position-relative w-100">
+            <canvas id="game-canvas"></canvas>
+            <div class="row position-absolute top-0 justify-content-around w-100 g-0 ">
+                <div id="score-text" class="col-6 pt-2 ps-2 text-start text-white">Score: 0</div>
+                <div id="status" class="col-6 pt-2 pe-2 text-end text-white"></div>
+            </div>
         </div>
-        <canvas id="game-canvas" class="border border-1 border-black"></canvas>
+        
         <button id="start-button" onclick="startGame()">Start Game</button>
-        <div id="status"></div>
     </div>
 
     <!-- MDB -->
