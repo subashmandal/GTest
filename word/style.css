@@ -4,7 +4,7 @@ body {
     background-color: #f7f9fc;
     margin: 0;
     padding: 0;
-    background-image: url('background.jpg'); /* Set your background image here */
+    background-image: url('image/background.jpg'); /* Set your background image here */
     background-size: cover;
     background-position: center;
     height: 100vh;
