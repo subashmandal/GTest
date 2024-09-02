@@ -94,12 +94,12 @@ function startVoiceRecognition() {
         recognition.stop(); // Stop recognition after speech ends
     };
 
-    // recognition.onend = function () {
-    //     // Automatically restart recognition to keep listening
-    //     if (!isGameOver) {
-    //         recognition.start();
-    //     }
-    // };
+    recognition.onend = function () {
+        // Automatically restart recognition to keep listening
+        if (!isGameOver) {
+            recognition.start();
+        }
+    };
 
     recognition.start(); // Start the recognition service
 }
