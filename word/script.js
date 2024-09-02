@@ -4,30 +4,57 @@ const ctx = canvas.getContext('2d');
 let recognition;
 let score = 0;
 let words = [];
-const wordInterval = 2000; // Time interval between words (milliseconds)
-const gravity = 0.8; // Gravity effect
+let mode = 'free'; // Default mode
+let difficulty = 'normal'; // Default difficulty
+let isGameOver = false;
+
 let backgroundImage = new Image();
 backgroundImage.src = 'image/background.jpg'; // Replace with your background image path
 
-const wordList = [
-    "start", "jump", "run", "fly", "stop", "go", "up", "down", "left", "right"
-];
+let backgroundMusic = new Audio('sound/background.mp3');
+backgroundMusic.loop = true; // Enable looping for background music
+backgroundMusic.volume = 0.02; // Set the volume to 50%
 
-// Load a sound to play when the word is correctly spoken
-let correctSound = new Audio('sound/success.mp3'); // Replace with your sound file path
+const gravity = 0.8;
+const wordInterval = 2000;
+
+const wordSets = {
+    easy: ["cat", "dog", "bat", "hat", "rat"],
+    normal: ["start", "jump", "run", "fly", "stop", "go", "up", "down", "left", "right"],
+    hard: ["elephant", "giraffe", "hippopotamus", "rhinoceros", "crocodile"]
+};
+
+let wordList = wordSets[difficulty];
+
+function getUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+function setDefaults() {
+    mode = getUrlParameter('mode') || 'free';
+    difficulty = getUrlParameter('difficulty') || 'normal';
+    wordList = wordSets[difficulty];
+}
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight; // Adjust height as needed
+    canvas.height = window.innerHeight * 0.8; // Adjust height as needed
 }
 
 function startGame() {
-    resizeCanvas(); // Set initial canvas size
+    resizeCanvas();
     score = 0;
     words = [];
+    isGameOver = false;
+    setDefaults();
     document.getElementById('score-text').innerText = `Score: ${score}`;
     document.getElementById('status').innerText = '';
-    document.getElementById('start-button').style.display = 'none';
+    document.getElementById('replay-button').style.display = 'none';
+    document.getElementById('back-button').style.display = 'none';
+    
+    backgroundMusic.play(); // Start the background music
+    
     startVoiceRecognition();
     generateWords();
     gameLoop();
@@ -40,119 +67,150 @@ function startVoiceRecognition() {
     }
 
     recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
+    recognition.continuous = true; // Continue listening even after getting results
+    recognition.interimResults = false; // Only finalize results
+    recognition.lang = "en-US"; // Set the language
 
-    recognition.onstart = function() {
+    recognition.onstart = function () {
         document.getElementById('status').innerText = "Listening...";
     };
 
-    recognition.onresult = function(event) {
+    recognition.onresult = function (event) {
         const spokenCommand = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
         document.getElementById('status').innerText = `You said: ${spokenCommand}`;
-        checkWord(spokenCommand);
+        checkWord(spokenCommand); // Check the word spoken
     };
 
-    recognition.onerror = function(event) {
+    recognition.onerror = function (event) {
         document.getElementById('status').innerText = `Error: ${event.error}`;
+        if (event.error === 'no-speech') {
+            // Optional: Restart recognition or give feedback to user
+            recognition.stop();
+            // recognition.start();
+        }
     };
 
-    recognition.start();
+    recognition.onspeechend = function() {
+        recognition.stop(); // Stop recognition after speech ends
+    };
+
+    // recognition.onend = function () {
+    //     // Automatically restart recognition to keep listening
+    //     if (!isGameOver) {
+    //         recognition.start();
+    //     }
+    // };
+
+    recognition.start(); // Start the recognition service
 }
 
 function generateWords() {
     setInterval(() => {
-        const word = wordList[Math.floor(Math.random() * wordList.length)];
-        const fontSize = 20; // Font size for the word
-        const textWidth = ctx.measureText(word).width;
-        const x = Math.random() * (canvas.width - textWidth); // Random x position within canvas
-        const y = -fontSize; // Start above the canvas
-        words.push({ text: word, x: x, y: y, color: 'red', isActive: true, fontSize: fontSize });
+        if (!isGameOver) {
+            const word = wordList[Math.floor(Math.random() * wordList.length)];
+            const fontSize = 20;
+            const textWidth = ctx.measureText(word).width;
+            const x = Math.random() * (canvas.width - textWidth);
+            const y = -fontSize;
+            words.push({ text: word, x: x, y: y, color: '#2980b9', isActive: true, fontSize: fontSize });
+        }
     }, wordInterval);
 }
 
 function checkWord(spokenCommand) {
-    let foundMatch = false;
-
     words.forEach(word => {
         if (word.text === spokenCommand && word.isActive) {
-            word.color = 'blue'; // Mark the word as correctly spoken
-            word.isActive = false; // Deactivate the word
-            foundMatch = true;
+            score += 10;
+            document.getElementById('score-text').innerText = `Score: ${score}`;
+            word.isActive = false;
+            playCorrectSound();
         }
     });
+}
 
-    if (foundMatch) {
-        score += 10;
-        document.getElementById('score-text').innerText = `Score: ${score}`;
-        correctSound.play(); // Play the correct sound
+function drawBackground() {
+    if (backgroundImage.complete) {
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    } else {
+        backgroundImage.onload = function () {
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+        };
     }
 }
 
-function drawRoundedRect(x, y, width, height, radius, color) {
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-}
-
 function gameLoop() {
-    // Draw the background image
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    drawBackground();
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Update and draw words
     for (let i = 0; i < words.length; i++) {
         if (words[i].isActive) {
-            words[i].y += gravity; // Apply gravity
+            words[i].y += gravity;
 
-            // Check if word is off screen
             if (words[i].y > canvas.height) {
-                words[i].color = 'red'; // Mark missed word in red
+                words[i].color = 'red';
                 words[i].isActive = false;
+
+                if (mode === 'challenge') {
+                    endGame();
+                    return;
+                }
             }
 
-            // Draw rounded rectangle (box) around the word
-            const boxPadding = 10; // Padding around the word
+            ctx.fillStyle = 'red';
+            const boxRadius = 5; // Fixed radius
+            const boxPadding = 7;
             const boxWidth = ctx.measureText(words[i].text).width + boxPadding * 2;
             const boxHeight = words[i].fontSize + boxPadding * 2;
-            const boxX = words[i].x - boxPadding;
-            const boxY = words[i].y - words[i].fontSize - boxPadding;
 
-            drawRoundedRect(boxX, boxY, boxWidth, boxHeight, 10, words[i].color);
+            // Draw rounded rectangle
+            ctx.beginPath();
+            ctx.moveTo(words[i].x + boxRadius, words[i].y);
+            ctx.arcTo(words[i].x + boxWidth, words[i].y, words[i].x + boxWidth, words[i].y + boxHeight, boxRadius);
+            ctx.arcTo(words[i].x + boxWidth, words[i].y + boxHeight, words[i].x, words[i].y + boxHeight, boxRadius);
+            ctx.arcTo(words[i].x, words[i].y + boxHeight, words[i].x, words[i].y, boxRadius);
+            ctx.arcTo(words[i].x, words[i].y, words[i].x + boxWidth, words[i].y, boxRadius);
+            ctx.closePath();
+            ctx.fill();
 
-            // Calculate position to center the text inside the box
-            const textX = words[i].x + (boxWidth - ctx.measureText(words[i].text).width) / 2 - boxPadding;
-            const textY = words[i].y - words[i].fontSize / 2 - boxPadding / 2;
-
-            // Draw the word
             ctx.fillStyle = 'white';
-            ctx.font = `bold ${words[i].fontSize}px Arial`; // Make the word bold
-            ctx.textAlign = 'left';
+            ctx.font = `bold ${words[i].fontSize}px Arial`;
+            ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(words[i].text, textX, textY);
+            ctx.fillText(words[i].text, words[i].x + boxWidth / 2, words[i].y + boxHeight / 2);
         }
     }
 
-    // Remove inactive words
     words = words.filter(word => word.isActive || word.y <= canvas.height);
 
-    // Continue the game loop
-    requestAnimationFrame(gameLoop);
+    if (!isGameOver) {
+        requestAnimationFrame(gameLoop);
+    }
 }
 
-// Adjust canvas size on window resize
+function endGame() {
+    isGameOver = true;
+    playGameOverSound();
+    document.getElementById('status').innerText = "Game Over!";
+    document.getElementById('replay-button').style.display = 'inline-block';
+    document.getElementById('back-button').style.display = 'inline-block';
+
+    backgroundMusic.pause(); // Pause background music on game over
+}
+
+function playCorrectSound() {
+    const audio = new Audio('sound/success.mp3');
+    audio.play();
+}
+
+function playGameOverSound() {
+    const audio = new Audio('sound/gameover.mp3');
+    audio.play();
+}
+
 window.onresize = resizeCanvas;
 
-window.onload = function() {
-    document.getElementById('start-button').style.display = 'inline-block';
+window.onload = function () {
+    startGame();
+    setDefaults();
 };

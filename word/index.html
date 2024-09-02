@@ -19,19 +19,22 @@ rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css"
 rel="stylesheet"
 />
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container-fluid g-0">
-        <div class="position-relative w-100">
-            <canvas id="game-canvas"></canvas>
-            <div class="row position-absolute top-0 justify-content-around w-100 g-0 ">
-                <div id="score-text" class="col-6 pt-2 ps-2 text-start text-white">Score: 0</div>
-                <div id="status" class="col-6 pt-2 pe-2 text-end text-white"></div>
-            </div>
-        </div>
-        
-        <button id="start-button" onclick="startGame()">Start Game</button>
+    <div class="container-fluid g-0 d-flex justify-content-center align-items-center flex-column" style="min-height: 100vh;">
+
+    <select id="option1" class="select m-2">
+        <option value="free" selected>Free Mode</option>
+        <option value="challenge">Challenge Mode</option>
+    </select>
+
+    <select id="option2" class="select m-2">
+        <option value="easy">Easy</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard</option>
+    </select>
+
+        <button id="start-button" class="btn btn-danger m-2" onclick="startGame()">Start Game</button>
     </div>
 
     <!-- MDB -->
@@ -39,6 +42,18 @@ rel="stylesheet"
 type="text/javascript"
 src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"
 ></script>
-    <script src="script.js"></script>
+    <script>
+        function startGame() {
+            // Get the selected values
+            const option1Value = document.getElementById('option1').value;
+            const option2Value = document.getElementById('option2').value;
+
+            // Construct the URL with the selected values as query parameters
+            const url = `game.html?mode=${option1Value}&difficulty=${option2Value}`;
+
+            // Redirect to the constructed URL
+            window.location.href = url;
+        }
+    </script>
 </body>
 </html>
