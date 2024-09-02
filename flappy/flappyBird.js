@@ -276,8 +276,8 @@ recognition.onstart = function(event) {
     clearTimeout(speakTimeout);
     isSpeaking = true;
 
-    const command = event.results[0][0].transcript;
-    voiceCommandOutput.textContent = `Voice Command: ${command}`;
+    // const command = event.results[0][0].transcript;
+    // voiceCommandOutput.textContent = `Voice Command: ${command}`;
 
     // jump sound
     jumpSound.play();
