@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Command Detection</title>
+</head>
+<body>
+    <h1>Voice Command Detection</h1>
+    <p id="status">Press the button and start speaking.</p>
+    <button id="start-button">Start Voice Recognition</button>
+    <p id="result"></p>
+
+    <script>
+        const startButton = document.getElementById('start-button');
+        const statusText = document.getElementById('status');
+        const resultText = document.getElementById('result');
+
+        // Check for browser support
+        if (!('webkitSpeechRecognition' in window)) {
+            statusText.textContent = "Your browser does not support speech recognition. Please try another browser.";
+        } else {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false; // Stop automatically after a single result
+            recognition.interimResults = false; // Return only final results
+            recognition.lang = "en-US"; // Set the language
+
+            // Start recognition when the button is clicked
+            startButton.addEventListener('click', () => {
+                recognition.start();
+                statusText.textContent = "Listening...";
+            });
+
+            // Handle the result
+            recognition.onresult = (event) => {
+                const spokenCommand = event.results[0][0].transcript;
+                console.log("Recognized command:", spokenCommand);
+                resultText.textContent = `You said: "${spokenCommand}"`;
+                statusText.textContent = "Voice recognition stopped. Press the button to start again.";
+            };
+
+            // Handle errors
+            recognition.onerror = (event) => {
+                console.log(`Error occurred: ${event.error}`);
+                statusText.textContent = `Error occurred: ${event.error}. Try again.`;
+            };
+
+            // When the recognition ends
+            recognition.onend = () => {
+                console.log("Voice recognition ended.");
+            };
+        }
+    </script>
+</body>
+</html>
