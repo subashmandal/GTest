@@ -30,9 +30,39 @@ rel="stylesheet"
     <div class="container-fluid g-0">
         <div class="position-relative w-100">
             <canvas id="game-canvas"></canvas>
-            <div class="row position-absolute top-0 justify-content-around w-100 g-0 ">
-                <div id="score-text" class="col-6 pt-2 ps-2 text-start text-white">Score: 0</div>
-                <div id="status" class="col-6 pt-2 pe-2 text-end text-white"></div>
+            <div class="row position-absolute top-0 justify-content-around w-100 g-0 p-1" style="background: radial-gradient(circle at center, #C0C0C0 , #818181)">
+                <div id="score-text" class="col-6 text-start text-white">Score: 0</div>
+                <div class="col-6 d-flex justify-content-end">
+                <div id="status" class="text-white"></div>
+                <!-- dropdown start -->
+                <div class="dropdown">
+                    <a
+                      data-mdb-dropdown-init
+                      class="text-reset dropdown-toggle hidden-arrow btn m-0 py-0 shadow-0"
+                      href="javascript:void(0)"
+                      id="navbarDropdownMenuLink"
+                      role="button"
+                      aria-expanded="false"
+                    >
+                    <i class="fas fa-ellipsis-vertical text-white"></i>
+                    </a>
+                    <ul
+                      class="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="navbarDropdownMenuLink"
+                    >
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="startGame()">Restart</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0)" id="pause-text" onclick="togglePauseGame()">Pause</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="index.html">Back</a>
+                      </li>
+                    </ul>
+                  </div>
+                <!-- dropdown end-->
+                </div>
             </div>
             <div class="position-absolute top-50 start-50 translate-middle">
                 <button id="replay-button" onclick="startGame()" class="btn btn-primary m-1" style="display: none;" >Replay</button>

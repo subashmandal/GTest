@@ -1,4 +1,5 @@
 const canvas = document.getElementById('game-canvas');
+const PauseText =document.getElementById('pause-text');
 const ctx = canvas.getContext('2d');
 
 let recognition;
@@ -7,9 +8,10 @@ let words = [];
 let mode = 'free'; // Default mode
 let difficulty = 'normal'; // Default difficulty
 let isGameOver = false;
+let isPaused = false; // To track if the game is paused
 
 let backgroundImage = new Image();
-backgroundImage.src = 'image/background.jpg'; // Replace with your background image path
+backgroundImage.src = 'image/background.png'; // Replace with your background image path
 
 let backgroundMusic = new Audio('sound/background.mp3');
 backgroundMusic.loop = true; // Enable looping for background music
@@ -47,6 +49,7 @@ function startGame() {
     score = 0;
     words = [];
     isGameOver = false;
+    isPaused = false;
     setDefaults();
     document.getElementById('score-text').innerText = `Score: ${score}`;
     document.getElementById('status').innerText = '';
@@ -106,7 +109,7 @@ function startVoiceRecognition() {
 
 function generateWords() {
     setInterval(() => {
-        if (!isGameOver) {
+        if (!isGameOver && !isPaused) {
             const word = wordList[Math.floor(Math.random() * wordList.length)];
             const fontSize = 20;
             const textWidth = ctx.measureText(word).width;
@@ -139,52 +142,70 @@ function drawBackground() {
 }
 
 function gameLoop() {
-    drawBackground();
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Update and draw words
-    for (let i = 0; i < words.length; i++) {
-        if (words[i].isActive) {
-            words[i].y += gravity;
-
-            if (words[i].y > canvas.height) {
-                words[i].color = 'red';
-                words[i].isActive = false;
-
-                if (mode === 'challenge') {
-                    endGame();
-                    return;
+    if(!isPaused){
+        drawBackground();
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        // Update and draw words
+        for (let i = 0; i < words.length; i++) {
+            if (words[i].isActive) {
+                words[i].y += gravity;
+    
+                if (words[i].y > canvas.height) {
+                    words[i].color = 'red';
+                    words[i].isActive = false;
+    
+                    if (mode === 'challenge') {
+                        endGame();
+                        return;
+                    }
                 }
+    
+                ctx.fillStyle = 'red';
+                const boxRadius = 5; // Fixed radius
+                const boxPadding = 7;
+                const boxWidth = ctx.measureText(words[i].text).width + boxPadding * 2;
+                const boxHeight = words[i].fontSize + boxPadding * 2;
+    
+                // Draw rounded rectangle
+                ctx.beginPath();
+                ctx.moveTo(words[i].x + boxRadius, words[i].y);
+                ctx.arcTo(words[i].x + boxWidth, words[i].y, words[i].x + boxWidth, words[i].y + boxHeight, boxRadius);
+                ctx.arcTo(words[i].x + boxWidth, words[i].y + boxHeight, words[i].x, words[i].y + boxHeight, boxRadius);
+                ctx.arcTo(words[i].x, words[i].y + boxHeight, words[i].x, words[i].y, boxRadius);
+                ctx.arcTo(words[i].x, words[i].y, words[i].x + boxWidth, words[i].y, boxRadius);
+                ctx.closePath();
+                ctx.fill();
+    
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${words[i].fontSize}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(words[i].text, words[i].x + boxWidth / 2, words[i].y + boxHeight / 2);
             }
-
-            ctx.fillStyle = 'red';
-            const boxRadius = 5; // Fixed radius
-            const boxPadding = 7;
-            const boxWidth = ctx.measureText(words[i].text).width + boxPadding * 2;
-            const boxHeight = words[i].fontSize + boxPadding * 2;
-
-            // Draw rounded rectangle
-            ctx.beginPath();
-            ctx.moveTo(words[i].x + boxRadius, words[i].y);
-            ctx.arcTo(words[i].x + boxWidth, words[i].y, words[i].x + boxWidth, words[i].y + boxHeight, boxRadius);
-            ctx.arcTo(words[i].x + boxWidth, words[i].y + boxHeight, words[i].x, words[i].y + boxHeight, boxRadius);
-            ctx.arcTo(words[i].x, words[i].y + boxHeight, words[i].x, words[i].y, boxRadius);
-            ctx.arcTo(words[i].x, words[i].y, words[i].x + boxWidth, words[i].y, boxRadius);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = 'white';
-            ctx.font = `bold ${words[i].fontSize}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(words[i].text, words[i].x + boxWidth / 2, words[i].y + boxHeight / 2);
+        }
+    
+        words = words.filter(word => word.isActive || word.y <= canvas.height);
+    
+        if (!isGameOver) {
+            requestAnimationFrame(gameLoop);
         }
     }
+}
 
-    words = words.filter(word => word.isActive || word.y <= canvas.height);
-
-    if (!isGameOver) {
-        requestAnimationFrame(gameLoop);
+function togglePauseGame() {
+    isPaused = !isPaused;
+    if (!isPaused) {
+        PauseText.textContent = "Pause";
+        backgroundMusic.play();
+        gameLoop(); // Resume the game loop if unpaused
+        document.getElementById('replay-button').style.display = 'none';
+        document.getElementById('back-button').style.display = 'none';
+    }else{
+        PauseText.textContent = "Play";
+        backgroundMusic.pause();
+        document.getElementById('replay-button').style.display = 'inline-block';
+        document.getElementById('back-button').style.display = 'inline-block';
     }
 }
 
