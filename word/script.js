@@ -10,6 +10,7 @@ let difficulty = 'normal'; // Default difficulty
 let isGameOver = false;
 let isPaused = false; // To track if the game is paused
 let highestScore = localStorage.getItem('Ecoquest') || 0; // Retrieve highest score from local storage or set to 0
+let wakeLock = null;
 
 let backgroundImage = new Image();
 backgroundImage.src = 'image/background.png'; // Replace with your background image path
@@ -29,6 +30,30 @@ const wordSets = {
 
 let wordList = wordSets[difficulty];
 
+        // Function to request the wake lock
+        async function requestWakeLock() {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log("Wake Lock is active: Screen will not turn off.");
+                
+                // Listen for the wake lock release event
+                wakeLock.addEventListener('release', () => {
+                    console.log("Wake Lock has been released: Screen may turn off.");
+                });
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+            }
+        }
+
+        // Function to release the wake lock
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release();
+                wakeLock = null;
+                console.log("Wake Lock released manually.");
+            }
+        }
+
 function getUrlParameter(name) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(name);
@@ -47,6 +72,7 @@ function resizeCanvas() {
 
 function startGame() {
     resizeCanvas();
+    requestWakeLock(); // Keep the screen awake
     score = 0;
     words = [];
     isGameOver = false;
@@ -56,6 +82,7 @@ function startGame() {
     document.getElementById('status').innerText = '';
     document.getElementById('replay-button').style.display = 'none';
     document.getElementById('back-button').style.display = 'none';
+    document.getElementById('GameText').style.display = 'none';
     
     backgroundMusic.play(); // Start the background music
     
@@ -208,6 +235,8 @@ function togglePauseGame() {
         backgroundMusic.pause();
         document.getElementById('replay-button').style.display = 'inline-block';
         document.getElementById('back-button').style.display = 'inline-block';
+        document.getElementById('GameText').style.display = 'block';
+        document.getElementById('GameText').textContent="Paused!!!";
     }
 }
 
@@ -217,9 +246,15 @@ function endGame() {
     document.getElementById('status').innerText = "Game Over!";
     document.getElementById('replay-button').style.display = 'inline-block';
     document.getElementById('back-button').style.display = 'inline-block';
+    document.getElementById('GameText').style.display = 'block';
+    document.getElementById('GameText').textContent="Score: "+highestScore;
 
     backgroundMusic.pause(); // Pause background music on game over
+    SaveScore();
+    releaseWakeLock(); // Allow the screen to turn off
+}
 
+function SaveScore(){
     // Update highest score
     if (score > highestScore) {
         highestScore = score;
@@ -244,3 +279,7 @@ window.onload = function () {
     startGame();
     setDefaults();
 };
+window.addEventListener('beforeunload', function (e) {
+    // Run the function
+    SaveScore();
+});

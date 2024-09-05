@@ -46,10 +46,7 @@ href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swa
 rel="stylesheet"
 />
 <!-- MDB -->
-<link
-href="../css/mdb.min.css"
-rel="stylesheet"
-/>
+<link href="../css/mdb.min.css" rel="stylesheet"/>
 <style>
     select{
         max-width: 250px;
@@ -80,54 +77,54 @@ rel="stylesheet"
 </head>
 <body style="background-color: #DDDDDD;">
     <!-- Navbar -->
-<nav class="navbar navbar-expand-lg shadow-0">
-    <!-- Container wrapper -->
-    <div class="container-fluid">
-  
-      <!-- Collapsible wrapper -->
-      <div class="navbar-brand">
-        <!-- Navbar brand -->
-        <a class="navbar-brand" href="#">
-          <medium>Highest Score: <span id="Score-text"></span></medium>
-        </a>
-        <!-- Left links -->
-      </div>
-      <!-- Collapsible wrapper -->
-  
-      <!-- Right elements -->
-      <div class="d-flex align-items-center">
-        <!-- Avatar -->
-        <div class="dropdown">
-          <a
-            data-mdb-dropdown-init
-            class="dropdown-toggle d-flex align-items-center hidden-arrow"
-            href="#"
-            id="navbarDropdownMenuAvatar"
-            role="button"
-            aria-expanded="false"
-          >
-            <img
-              src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-              class="rounded-circle"
-              height="25"
-              alt="Black and White Portrait of a Man"
-              loading="lazy"
-            />
+    <nav class="navbar navbar-expand-lg shadow-0">
+      <!-- Container wrapper -->
+      <div class="container-fluid">
+    
+        <!-- Collapsible wrapper -->
+        <div class="navbar-brand">
+          <!-- Navbar brand -->
+          <a class="navbar-brand" href="#">
+            <medium>Highest Score: <span id="Score-text"></span></medium>
           </a>
-          <ul
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="navbarDropdownMenuAvatar"
-          >
-            <li>
-              <a class="dropdown-item" href="about/">About</a>
-            </li>
-          </ul>
+          <!-- Left links -->
         </div>
+        <!-- Collapsible wrapper -->
+    
+        <!-- Right elements -->
+        <div class="d-flex align-items-center">
+          <!-- Avatar -->
+          <div class="dropdown">
+            <a
+              data-mdb-dropdown-init
+              class="dropdown-toggle d-flex align-items-center hidden-arrow"
+              href="#"
+              id="navbarDropdownMenuAvatar"
+              role="button"
+              aria-expanded="false"
+            >
+              <img
+                src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                class="rounded-circle"
+                height="25"
+                alt="Black and White Portrait of a Man"
+                loading="lazy"
+              />
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="navbarDropdownMenuAvatar"
+            >
+              <li>
+                <a class="dropdown-item" href="about/">About</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Right elements -->
       </div>
-      <!-- Right elements -->
-    </div>
-    <!-- Container wrapper -->
-  </nav>
+      <!-- Container wrapper -->
+    </nav>
   <!-- Navbar -->
     <div class="container-fluid g-0 d-flex justify-content-center align-items-center flex-column" style="min-height: 100vh;">
 
@@ -147,13 +144,14 @@ rel="stylesheet"
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content" style="background: rgba(255, 255, 255, 0.8);">
         <div class="modal-header border-bottom-0">
           <h5 class="modal-title" id="exampleModalLabel">instructions</h5>
         </div>
         
         <div class="modal-body">
-          <b>Welcome to the game! Here’s how to play:</b>
+          <h5><b>Welcome to the game!</b></h5>
+          <p><b> Here’s how to play:</b></p>
           <ul>
             <li>Words will drop from the top of the screen.</li>
             <li>Say the word correctly using your voice to make it disappear.</li>
@@ -162,16 +160,17 @@ rel="stylesheet"
           </ul>
           <p>Press '<b>Start</b>' to begin the game.</p></div>
           <div class="modal-footer border-top-0 d-flex justify-content-center">
-            <button type="button" onclick="startGame1()" class="btn btn-primary shadow-0" data-mdb-ripple-init>Play</button>
+            <button type="button" onclick="startGame1()" class="btn btn-primary shadow-0" data-mdb-ripple-init>Start</button>
           </div>
       </div>
     </div>
   </div>
     <!-- MDB -->
-<script
-type="text/javascript"
-src="../js/mdb.min.js"
-></script>
+    <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"
+    ></script>
+<script type="text/javascript" src="../js/mdb.min.js"></script>
     <script>
         const ScoreText =document.getElementById('Score-text');
         let highestScore = localStorage.getItem('Ecoquest') || 0; // Retrieve highest score from local storage or set to 0
