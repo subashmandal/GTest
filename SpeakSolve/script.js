@@ -15,6 +15,7 @@ let timeLeft = 20; // Set initial timer to 20 seconds
 // DOM Elements
 const puzzleQuestion = document.getElementById('puzzle-question');
 const feedback = document.getElementById('feedback');
+const recognizedVoice = document.getElementById('recognized-voice'); // New element for displaying recognized voice
 const startBtn = document.getElementById('start-btn');
 const pauseBtn = document.getElementById('pause-btn');
 const restartBtn = document.getElementById('restart-btn');
@@ -32,6 +33,7 @@ function startGame() {
     pauseBtn.classList.remove('hidden');
     restartBtn.classList.add('hidden');
     finalScore.classList.add('hidden');
+    feedback.classList.remove('red', 'green');
     isGamePaused = false;
     score = 0;
     scoreDisplay.innerText = `Score: ${score}`;
@@ -45,6 +47,7 @@ function startGame() {
 function loadPuzzle() {
     if (currentPuzzleIndex < puzzles.length) {
         puzzleQuestion.innerText = puzzles[currentPuzzleIndex].question;
+        recognizedVoice.innerText = ""; // Clear previous recognized text
         resetTimer(); // Reset the timer for the new puzzle
     } else {
         gameOver();
@@ -111,6 +114,7 @@ const recognition = new SpeechRecognition();
 
 recognition.onresult = (event) => {
     const spokenWord = event.results[0][0].transcript.toLowerCase();
+    displayRecognizedVoice(spokenWord); // Display the recognized voice
     checkAnswer(spokenWord);
 };
 
@@ -126,17 +130,35 @@ function stopSpeechRecognition() {
     recognition.stop();
 }
 
+// Function to display the recognized voice text
+function displayRecognizedVoice(spokenWord) {
+    recognizedVoice.innerText = `You said: "${spokenWord}"`;
+}
+
+// Check if the answer is correct
 function checkAnswer(spokenWord) {
     const correctAnswer = puzzles[currentPuzzleIndex].answer.toLowerCase();
 
     if (spokenWord === correctAnswer) {
         feedback.innerText = "Correct!";
+        feedback.classList.add('green');
+        recognizedVoice.classList.add('green'); // Set recognized voice to green
         score++;
         scoreDisplay.innerText = `Score: ${score}`;
         currentPuzzleIndex++;
-        loadPuzzle(); // Load the next puzzle when the current one is solved
+
+        // Wait 5 seconds and load the next puzzle
+        setTimeout(() => {
+            feedback.classList.remove('green');
+            recognizedVoice.classList.remove('green');
+            loadPuzzle(); // Load the next puzzle after a delay
+        }, 5000);
+
     } else {
-        feedback.innerText = "Try again!";
+        feedback.innerText = "Wrong! Game Over!";
+        feedback.classList.add('red');
+        recognizedVoice.classList.add('red'); // Set recognized voice to red
+        gameOver();
     }
 }
 
