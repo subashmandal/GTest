@@ -9,6 +9,7 @@ let mode = 'free'; // Default mode
 let difficulty = 'normal'; // Default difficulty
 let isGameOver = false;
 let isPaused = false; // To track if the game is paused
+let highestScore = localStorage.getItem('Ecoquest') || 0; // Retrieve highest score from local storage or set to 0
 
 let backgroundImage = new Image();
 backgroundImage.src = 'image/background.png'; // Replace with your background image path
@@ -61,6 +62,7 @@ function startGame() {
     startVoiceRecognition();
     generateWords();
     gameLoop();
+    
 }
 
 function startVoiceRecognition() {
@@ -152,7 +154,7 @@ function gameLoop() {
                 words[i].y += gravity;
     
                 if (words[i].y > canvas.height) {
-                    words[i].color = 'red';
+                    words[i].color = '#ABABAB';
                     words[i].isActive = false;
     
                     if (mode === 'challenge') {
@@ -161,7 +163,7 @@ function gameLoop() {
                     }
                 }
     
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = '#ABABAB';
                 const boxRadius = 5; // Fixed radius
                 const boxPadding = 7;
                 const boxWidth = ctx.measureText(words[i].text).width + boxPadding * 2;
@@ -217,6 +219,13 @@ function endGame() {
     document.getElementById('back-button').style.display = 'inline-block';
 
     backgroundMusic.pause(); // Pause background music on game over
+
+    // Update highest score
+    if (score > highestScore) {
+        highestScore = score;
+        localStorage.setItem('Ecoquest', highestScore); // Store highest score in local storage
+        document.getElementById('highest-score-text').innerText = `Highest Score: ${highestScore}`;
+    }
 }
 
 function playCorrectSound() {

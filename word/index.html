@@ -3,7 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EchoQuest</title>
+    <title>EchoQuest - Voice Recognition Game | Play & Learn</title>
+    
+    <!-- SEO -->
+     <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EchoQuest is an interactive voice recognition game that challenges you to pronounce words correctly to score points. Enjoy learning while playing!">
+    <meta name="keywords" content="EchoQuest, voice recognition game, learning game, educational game, word game, interactive game">
+    <meta name="author" content="Your Name or Company Name">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="EchoQuest - The Interactive Voice Recognition Game">
+    <meta property="og:description" content="Test your pronunciation skills in EchoQuest, the fun and educational voice recognition game.">
+    <meta property="og:image" content="URL to your game's featured image">
+    <meta property="og:url" content="https://yourdomain.com/echoquest">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EchoQuest - The Interactive Voice Recognition Game">
+    <meta name="twitter:description" content="Improve your pronunciation while playing EchoQuest, the ultimate voice recognition game.">
+    <meta name="twitter:image" content="URL to your game's featured image">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yourdomain.com/echoquest">
+
+    <!-- favicon -->
     <link rel="icon" href="../favicon_io/favicon.ico" type="image/x-icon"> <!-- Default favicon -->
     <link rel="icon" href="../favicon_io/android-chrome-192x192.png" type="image/png"> <!-- PNG format -->
     <link rel="apple-touch-icon" href="../favicon_io/apple-touch-icon.png"> <!-- Apple devices -->
@@ -21,7 +47,7 @@ rel="stylesheet"
 />
 <!-- MDB -->
 <link
-href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css"
+href="../css/mdb.min.css"
 rel="stylesheet"
 />
 <style>
@@ -29,9 +55,150 @@ rel="stylesheet"
         max-width: 250px;
     }
 </style>
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Game",
+      "name": "EchoQuest",
+      "description": "EchoQuest is an interactive voice recognition game that helps players improve their pronunciation skills through fun and engaging gameplay.",
+      "image": "URL to your game's featured image",
+      "url": "https://yourdomain.com/echoquest",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Your Company Name"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://yourdomain.com/echoquest",
+        "priceCurrency": "USD",
+        "price": "0", 
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
 </head>
 <body style="background-color: #DDDDDD;">
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+      <!-- Toggle button -->
+      <button
+        data-mdb-collapse-init
+        class="navbar-toggler"
+        type="button"
+        data-mdb-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+  
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Navbar brand -->
+        <a class="navbar-brand mt-2 mt-lg-0" href="#">
+          <img
+            src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+            height="15"
+            alt="MDB Logo"
+            loading="lazy"
+          />
+        </a>
+        <!-- Left links -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Team</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Projects</a>
+          </li>
+        </ul>
+        <!-- Left links -->
+      </div>
+      <!-- Collapsible wrapper -->
+  
+      <!-- Right elements -->
+      <div class="d-flex align-items-center">
+        <!-- Icon -->
+        <a class="text-reset me-3" href="#">
+          <i class="fas fa-shopping-cart"></i>
+        </a>
+  
+        <!-- Notifications -->
+        <div class="dropdown">
+          <a
+            data-mdb-dropdown-init
+            class="text-reset me-3 dropdown-toggle hidden-arrow"
+            href="#"
+            id="navbarDropdownMenuLink"
+            role="button"
+            aria-expanded="false"
+          >
+            <i class="fas fa-bell"></i>
+            <span class="badge rounded-pill badge-notification bg-danger">1</span>
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="navbarDropdownMenuLink"
+          >
+            <li>
+              <a class="dropdown-item" href="#">Some news</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Another news</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </li>
+          </ul>
+        </div>
+        <!-- Avatar -->
+        <div class="dropdown">
+          <a
+            data-mdb-dropdown-init
+            class="dropdown-toggle d-flex align-items-center hidden-arrow"
+            href="#"
+            id="navbarDropdownMenuAvatar"
+            role="button"
+            aria-expanded="false"
+          >
+            <img
+              src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+              class="rounded-circle"
+              height="25"
+              alt="Black and White Portrait of a Man"
+              loading="lazy"
+            />
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="navbarDropdownMenuAvatar"
+          >
+            <li>
+              <a class="dropdown-item" href="about/">About</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Settings</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Right elements -->
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
     <div class="container-fluid g-0 d-flex justify-content-center align-items-center flex-column" style="min-height: 100vh;">
+        <medium>Highest Score: <span id="Score-text"></span></medium>
 
     <select id="option1" class="select form-select m-2">
         <option value="free" selected>Free Mode</option>
@@ -46,18 +213,59 @@ rel="stylesheet"
 
         <button id="start-button" class="btn btn-danger m-2" onclick="startGame()">Start Game</button>
     </div>
-
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">instructions</h5>
+          <button type="button" onclick="startGame()" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">Welcome to the game! Here’s how to play:
+          1. Words will drop from the top of the screen.
+          2. Say the word correctly using your voice to make it disappear.
+          3. Gain points for each correct word spoken.
+          4. Try to get the highest score!
+          Press 'Start' to begin the game.</div>
+          <div class="modal-footer">
+            <button type="button" onclick="startGame1()" class="btn" data-mdb-ripple-init>Play</button>
+          </div>
+      </div>
+    </div>
+  </div>
     <!-- MDB -->
 <script
 type="text/javascript"
-src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"
+src="../js/mdb.min.js"
 ></script>
     <script>
+        const ScoreText =document.getElementById('Score-text');
+        let highestScore = localStorage.getItem('Ecoquest') || 0; // Retrieve highest score from local storage or set to 0
+        ScoreText.textContent = highestScore;
+
         function startGame() {
             // Get the selected values
             const option1Value = document.getElementById('option1').value;
             const option2Value = document.getElementById('option2').value;
 
+                        // Check if the highest score is 0 or null to show the instructions
+    if (highestScore == 0) {
+        var myModal = new mdb.Modal(document.getElementById('exampleModal'));
+        myModal.show(); // Show the instructions if the player has no score
+    }else{
+// Construct the URL with the selected values as query parameters
+const url = `game.html?mode=${option1Value}&difficulty=${option2Value}`;
+
+// Redirect to the constructed URL
+window.location.href = url;
+    }
+            
+        }
+        function startGame1() {
+            // Get the selected values
+            const option1Value = document.getElementById('option1').value;
+            const option2Value = document.getElementById('option2').value;
             // Construct the URL with the selected values as query parameters
             const url = `game.html?mode=${option1Value}&difficulty=${option2Value}`;
 
