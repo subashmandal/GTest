@@ -215,21 +215,23 @@ rel="stylesheet"
     </div>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header border-bottom-0">
           <h5 class="modal-title" id="exampleModalLabel">instructions</h5>
-          <button type="button" onclick="startGame()" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
         </div>
         
-        <div class="modal-body">Welcome to the game! Here’s how to play:
-          1. Words will drop from the top of the screen.
-          2. Say the word correctly using your voice to make it disappear.
-          3. Gain points for each correct word spoken.
-          4. Try to get the highest score!
-          Press 'Start' to begin the game.</div>
-          <div class="modal-footer">
-            <button type="button" onclick="startGame1()" class="btn" data-mdb-ripple-init>Play</button>
+        <div class="modal-body">
+          <b>Welcome to the game! Here’s how to play:</b>
+          <ul>
+            <li>Words will drop from the top of the screen.</li>
+            <li>Say the word correctly using your voice to make it disappear.</li>
+            <li>Gain points for each correct word spoken.</li>
+            <li>Try to get the highest score!</li>
+          </ul>
+          <p>Press '<b>Start</b>' to begin the game.</p></div>
+          <div class="modal-footer border-top-0 d-flex justify-content-center">
+            <button type="button" onclick="startGame1()" class="btn btn-primary shadow-0" data-mdb-ripple-init>Play</button>
           </div>
       </div>
     </div>
